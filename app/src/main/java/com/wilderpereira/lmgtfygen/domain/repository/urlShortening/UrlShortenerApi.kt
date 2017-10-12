@@ -1,6 +1,5 @@
-package com.wilderpereira.lmgtfygen.domain.repository
+package com.wilderpereira.lmgtfygen.domain.repository.urlShortening
 
-import com.wilderpereira.lmgtfygen.domain.entity.SearchUrl
 import com.wilderpereira.lmgtfygen.domain.entity.ShortenerBody
 
 import retrofit2.http.Body

@@ -1,49 +1,30 @@
 package com.wilderpereira.lmgtfygen.domain.entity
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import java.net.URLEncoder
 import javax.inject.Inject
 
 /**
  * Created by Wilder on 22/01/17.
  */
-
 class SearchUrl @Inject constructor(){
 
-    val TYPE_REGEX = "(?<=t=)\\w*".toRegex()
-    val SEARCH_REGEX = "(?<=q=).*$".toRegex()
-    val INTERNET_EXPLAINER_REGEX = "(?<=iie=)\\d".toRegex()
-
-    @SerializedName("kind")
-    @Expose
-    var kind: String? = null
-    @SerializedName("id")
-    @Expose
-    var shortUrl: String? = null
-    @SerializedName("longUrl")
-    @Expose
-    var longUrl: String? = null
+    private val TYPE_REGEX = "(?<=t=)\\w*".toRegex()
+    private val SEARCH_REGEX = "(?<=q=).*$".toRegex()
+    private val INTERNET_EXPLAINER_REGEX = "(?<=iie=)\\d".toRegex()
 
     var url: String = "lmgtfy.com/?iie=0&t=&q="
+    var kind = ""
+    var shortUrl = ""
+    var longUrl = ""
 
-    override fun toString(): String {
-        return "SearchUrl(kind=$kind, shortUrl=$shortUrl, longUrl=$longUrl, url='$url')"
-    }
+    override fun toString() = "SearchUrl(kind=$kind, shortUrl=$shortUrl, longUrl=$longUrl, url='$url')"
 
-    fun updateSearchType(type: String): String {
-        url = url.replace(TYPE_REGEX, URLEncoder.encode(type[0].toLowerCase().toString(), "UTF-8"))
-        return url
-    }
+    fun updateSearchType(type: String): String = url.replace(TYPE_REGEX, URLEncoder.encode(type[0].toLowerCase().toString(), "UTF-8"))
+            .also { url = it }
 
-    fun updateSearchValue(searchValue: String): String {
-        url = url.replace(SEARCH_REGEX, URLEncoder.encode(searchValue, "UTF-8"))
-        return url
-    }
+    fun updateSearchValue(searchValue: String) = url.replace(SEARCH_REGEX, URLEncoder.encode(searchValue, "UTF-8"))
+            .also { url = it }
 
-    fun includeInternetExplainer(shouldInclude: Boolean) : String{
-        url = url.replace(INTERNET_EXPLAINER_REGEX, if(shouldInclude) "1" else "0" )
-        return url
-    }
-
+    fun includeInternetExplainer(shouldInclude: Boolean) = url.replace(INTERNET_EXPLAINER_REGEX, if(shouldInclude) "1" else "0" )
+            .also { url = it }
 }
