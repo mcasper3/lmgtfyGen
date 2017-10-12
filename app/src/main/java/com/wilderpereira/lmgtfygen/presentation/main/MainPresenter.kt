@@ -7,6 +7,7 @@ import com.wilderpereira.lmgtfygen.domain.entity.ShortenerBody
 import com.wilderpereira.lmgtfygen.domain.repository.urlShortening.UrlShortenerApi
 import com.wilderpereira.lmgtfygen.presentation.main.shortenUrl.ShortenUrlSuccessUiModel
 import com.wilderpereira.lmgtfygen.presentation.uriModel.FailureUiModel
+import com.wilderpereira.lmgtfygen.presentation.uriModel.InProgressUiModel
 import com.wilderpereira.lmgtfygen.presentation.uriModel.UiModel
 import com.wilderpereira.lmgtfygen.utils.TextProvider
 import rx.Observable
@@ -52,6 +53,7 @@ class MainPresenter @Inject constructor(
                 Log.e(TAG, "Failed to shorten URL", it)
                 FailureUiModel()
             }
+            .startWith(InProgressUiModel)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
