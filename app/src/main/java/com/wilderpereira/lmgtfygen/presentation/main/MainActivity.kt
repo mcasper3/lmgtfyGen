@@ -6,17 +6,16 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.ShareCompat
+import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxAdapterView
 import com.jakewharton.rxbinding.widget.RxCompoundButton
 import com.jakewharton.rxbinding.widget.RxTextView
-import com.kobakei.ratethisapp.RateThisApp.Config
-import com.kobakei.ratethisapp.RateThisApp.init
-import com.kobakei.ratethisapp.RateThisApp.onCreate
+import com.kobakei.ratethisapp.RateThisApp
 import com.kobakei.ratethisapp.RateThisApp.showRateDialogIfNeeded
-import com.wilderpereira.lmgtfygen.LmgtfyActivity
+import com.wilderpereira.lmgtfygen.App
 import com.wilderpereira.lmgtfygen.R
 import com.wilderpereira.lmgtfygen.extensions.hideKeyboard
 import com.wilderpereira.lmgtfygen.presentation.main.shortenUrl.ShortenUrlSuccessUiModel
@@ -28,7 +27,7 @@ import org.jetbrains.anko.indeterminateProgressDialog
 import rx.Observable
 import javax.inject.Inject
 
-class MainActivity : LmgtfyActivity(), MainPresenter.View {
+class MainActivity : AppCompatActivity(), MainPresenter.View {
 
     @Inject lateinit var presenter: MainPresenter
 
@@ -79,11 +78,12 @@ class MainActivity : LmgtfyActivity(), MainPresenter.View {
             .startChooser()
 
     private fun init() {
+        (application as App).component.inject(this)
         presenter.bindView(this)
 
-        val config = Config(3, 5)
-        init(config)
-        onCreate(this)
+        val config = RateThisApp.Config(3, 5)
+        RateThisApp.init(config)
+        RateThisApp.onCreate(this)
 
         loadSpinner()
 

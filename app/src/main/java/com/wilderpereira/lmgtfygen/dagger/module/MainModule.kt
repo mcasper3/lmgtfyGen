@@ -1,12 +1,13 @@
 package com.wilderpereira.lmgtfygen.dagger.module
 
-import com.wilderpereira.lmgtfygen.domain.repository.urlShortening.UrlShortenerApi
+import android.app.Application
 import dagger.Module
 import dagger.Provides
-import retrofit2.Retrofit
+import javax.inject.Singleton
 
 @Module
-class MainModule {
+class MainModule(val application: Application){
     @Provides
-    fun provideUrlShortenerApi(retrofit: Retrofit) = retrofit.create(UrlShortenerApi::class.java)
+    @Singleton
+    fun getTextProvider() = application.resources
 }

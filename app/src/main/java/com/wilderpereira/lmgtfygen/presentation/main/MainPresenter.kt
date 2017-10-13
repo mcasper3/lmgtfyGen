@@ -10,6 +10,7 @@ import com.wilderpereira.lmgtfygen.presentation.uriModel.FailureUiModel
 import com.wilderpereira.lmgtfygen.presentation.uriModel.InProgressUiModel
 import com.wilderpereira.lmgtfygen.presentation.uriModel.UiModel
 import com.wilderpereira.lmgtfygen.utils.TextProvider
+import retrofit2.Retrofit
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -19,7 +20,7 @@ import javax.inject.Inject
  * Created by Wilder on 22/01/17.
  */
 class MainPresenter @Inject constructor(
-        private val urlShortener: UrlShortenerApi,
+        private val retrofit: Retrofit,
         private var searchUrl: SearchUrl,
         private val textProvider: TextProvider
 ) {
@@ -43,19 +44,23 @@ class MainPresenter @Inject constructor(
 
     fun includeInternetExplainer(include: Boolean): Observable<String> = Observable.just(searchUrl.includeInternetExplainer(include))
 
-    fun shortenUrl(bigUrl: String): Observable<UiModel> = urlShortener
-            .shortenUrl(textProvider.getText(R.string.api_key), ShortenerBody(bigUrl.trimEnd().trimStart().replace(' ', '+')))
-            .flatMap { (kind, shortUrl, longUrl) ->
-                updateSearchUrl(kind, shortUrl, longUrl)
-                Observable.just<UiModel>(ShortenUrlSuccessUiModel(shortUrl))
-            }
-            .onErrorReturn {
-                Log.e(TAG, "Failed to shorten URL", it)
-                FailureUiModel()
-            }
-            .startWith(InProgressUiModel)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun shortenUrl(bigUrl: String): Observable<UiModel> {
+        var urlShortener = retrofit.create(UrlShortenerApi::class.java)
+
+        return urlShortener
+                .shortenUrl(textProvider.getText(R.string.api_key), ShortenerBody(bigUrl.trimEnd().trimStart().replace(' ', '+')))
+                .flatMap { (kind, shortUrl, longUrl) ->
+                    updateSearchUrl(kind, shortUrl, longUrl)
+                    Observable.just<UiModel>(ShortenUrlSuccessUiModel(shortUrl))
+                }
+                .onErrorReturn {
+                    Log.e(TAG, "Failed to shorten URL", it)
+                    FailureUiModel()
+                }
+                .startWith(InProgressUiModel)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+    }
 
     private fun updateSearchUrl(kind: String, shortUrl: String, longUrl: String) {
         searchUrl.kind = kind
